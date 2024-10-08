@@ -31,7 +31,6 @@ const Login = () => {
       setMessage('Login successful!');
       localStorage.setItem('token', data.token); // Guardar token en localStorage
       router.push('/'); // Redirigir al usuario a la página principal
-
     } else {
       setMessage(data.message);
     }
