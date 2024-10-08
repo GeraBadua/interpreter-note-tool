@@ -3,11 +3,14 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // Importar el hook de navegación
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const router = useRouter(); // Instanciar el router
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +29,9 @@ const Login = () => {
     const data = await res.json();
     if (res.ok) {
       setMessage('Login successful!');
-      localStorage.setItem('token', data.token);
+      localStorage.setItem('token', data.token); // Guardar token en localStorage
+      router.push('/'); // Redirigir al usuario a la página principal
+
     } else {
       setMessage(data.message);
     }
