@@ -1,20 +1,9 @@
 'use client'; // Este archivo es un componente del lado del cliente
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Importar el hook de navegación
-import Image from "next/image";
-import Navbar from './components/Navbar';
 import Link from 'next/link';
 
 export default function Home() {
-  const router = useRouter();
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login'); // Redirigir al usuario a la página de login si no hay token
-    }
-  }, [router]);
+  
 
   return (
     <div className="min-h-screen bg-[#f5ebdf]">

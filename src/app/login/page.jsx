@@ -27,19 +27,20 @@ const Login = () => {
     });
 
     const data = await res.json();
-    if (res.ok) {
-      setMessage('Login successful!');
-      localStorage.setItem('token', data.token); // Guardar token en localStorage
-      
-      // Despachar el evento personalizado de login para actualizar la navbar
-      const event = new Event('login');
-      window.dispatchEvent(event);
+  if (res.ok) {
+    setMessage('Login successful!');
+    localStorage.setItem('token', data.token); // Guardar token en localStorage
+    localStorage.setItem('role', data.role);   // Guardar rol en localStorage
 
-      router.push('/homePage'); // Redirigir al usuario a la página principal
-    } else {
-      setMessage(data.message);
-    }
-  };
+    // Despachar el evento personalizado de login para actualizar la navbar
+    const event = new Event('login');
+    window.dispatchEvent(event);
+
+    router.push('/home'); // Redirigir al usuario a la página principal
+  } else {
+    setMessage(data.message);
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#9c7efd]">
