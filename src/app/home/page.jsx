@@ -1,10 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'; // Importar el hook de navegación
+
 
 export default function HomePage() {
   const [notes, setNotes] = useState([]);
   const [currentNote, setCurrentNote] = useState({ title: '', content: '' });
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login'); // Redirigir al usuario a la página de login si no hay token
+    }
+  }, [router]);
 
   useEffect(() => {
     const savedNotes = JSON.parse(localStorage.getItem('translatorNotes') || '[]');
