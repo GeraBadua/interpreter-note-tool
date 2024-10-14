@@ -14,7 +14,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const res = await fetch('/api/login', {
       method: 'POST',
       headers: {
@@ -25,12 +25,17 @@ const Login = () => {
         password,
       }),
     });
-    
+
     const data = await res.json();
     if (res.ok) {
       setMessage('Login successful!');
       localStorage.setItem('token', data.token); // Guardar token en localStorage
-      router.push('/'); // Redirigir al usuario a la página principal
+      
+      // Despachar el evento personalizado de login para actualizar la navbar
+      const event = new Event('login');
+      window.dispatchEvent(event);
+
+      router.push('/homePage'); // Redirigir al usuario a la página principal
     } else {
       setMessage(data.message);
     }
@@ -65,7 +70,7 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+                className="text-black mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
                   focus:outline-none focus:border-[#76a82c] focus:ring-1 focus:ring-[#76a82c]"
               />
             </div>
