@@ -1,4 +1,5 @@
 'use client'; // Este archivo es un componente del lado del cliente
+<<<<<<< HEAD
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation'; // Importar el hook de navegación
@@ -7,11 +8,14 @@ import Navbar from './components/Navbar';
 import { Textarea } from './components/Textarea';
 import {Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle,
 } from "./components/card";
+=======
+>>>>>>> 62c7a4465d31898705029bac518a907e5db86bf7
 
 import Link from 'next/link';
 import { Button } from './components/button';
 
 export default function Home() {
+<<<<<<< HEAD
   const [context, setContext] = useState('');
   const [wordBank, setWordBank] = useState([]);
 /*   const router = useRouter();
@@ -27,6 +31,9 @@ export default function Home() {
     // Simulate generating a word bank based on context
     setWordBank(['customer', 'support', 'issue', 'resolution', 'feedback']);
   };
+=======
+  
+>>>>>>> 62c7a4465d31898705029bac518a907e5db86bf7
 
   return (
     <div className="min-h-screen bg-[#f5ebdf]">

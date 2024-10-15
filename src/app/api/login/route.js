@@ -23,10 +23,11 @@ export async function POST(req) {
   }
 
   const token = jwt.sign(
-    { id: user.user_id, role: user.role },
+    { id: user.user_id, role: user.role },  // Incluimos el rol en el token
     process.env.JWT_SECRET,
     { expiresIn: '1h' }
   );
 
-  return new Response(JSON.stringify({ token }), { status: 200 });
+  // Ahora también devolvemos el rol explícitamente en la respuesta
+  return new Response(JSON.stringify({ token, role: user.role }), { status: 200 });
 }
