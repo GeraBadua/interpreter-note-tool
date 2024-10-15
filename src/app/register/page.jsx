@@ -12,7 +12,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const res = await fetch('/api/register', {
       method: 'POST',
       headers: {
@@ -24,7 +24,7 @@ const Register = () => {
         password,
       }),
     });
-    
+
     const data = await res.json();
     if (res.ok) {
       setMessage('Registration successful!');
@@ -41,15 +41,16 @@ const Register = () => {
           <Image
             src="/images/imageRegister.jpeg"
             alt="Register Image"
-            layout="fill"
-            objectFit="cover"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover"
           />
           <div className="absolute inset-0 bg-[#231373] bg-opacity-50 flex flex-col justify-center p-12 text-white">
             <h2 className="text-3xl font-bold mb-6">Join Us Today!</h2>
             <p className="mb-6">Create an account to start your journey</p>
           </div>
         </div>
-        
+
         {/* Lado derecho con formulario */}
         <div className="w-1/2 p-12">
           <h1 className="text-3xl font-bold text-[#231373] mb-6">Create Account</h1>
@@ -62,8 +63,7 @@ const Register = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="text-black mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-                  focus:outline-none focus:border-[#76a82c] focus:ring-1 focus:ring-[#76a82c]"
+                className="text-black mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-[#76a82c] focus:ring-1 focus:ring-[#76a82c]"
               />
             </div>
             <div>
@@ -74,8 +74,7 @@ const Register = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="text-black mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-                  focus:outline-none focus:border-[#76a82c] focus:ring-1 focus:ring-[#76a82c]"
+                className="text-black mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-[#76a82c] focus:ring-1 focus:ring-[#76a82c]"
               />
             </div>
             <div>
@@ -86,8 +85,7 @@ const Register = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className=" text-black mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-                  focus:outline-none focus:border-[#76a82c] focus:ring-1 focus:ring-[#76a82c]"
+                className="text-black mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-[#76a82c] focus:ring-1 focus:ring-[#76a82c]"
               />
             </div>
             <button

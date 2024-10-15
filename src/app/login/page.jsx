@@ -50,8 +50,9 @@ const Login = () => {
           <Image
             src="/images/imageLogin.jpeg"
             alt="Login Image"
-            layout="fill"
-            objectFit="cover"
+            fill // Reemplaza layout="fill"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
+            style={{ objectFit: 'cover' }} // Reemplaza objectFit="cover"
           />
           <div className="absolute inset-0 bg-[#231373] bg-opacity-50 flex flex-col justify-center p-12 text-white">
             <h2 className="text-3xl font-bold mb-6">Welcome Back!</h2>
@@ -83,7 +84,7 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+                className="text-black mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
                   focus:outline-none focus:border-[#76a82c] focus:ring-1 focus:ring-[#76a82c]"
               />
             </div>
