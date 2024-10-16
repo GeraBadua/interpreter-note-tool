@@ -1,5 +1,7 @@
 'use client';
 
+import Translator_es from '@/app/components/translate_es';
+import Translator_en from '@/app/components/translate_en';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; // Importar el hook de navegación
 
@@ -78,6 +80,8 @@ export default function HomePage() {
           Save Note
         </button>
       </div>
+      <Translator_en></Translator_en>
+      <Translator_es></Translator_es>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export default function Translator() {
+export default function Translator_en() {
   const [inputText, setInputText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
 
@@ -15,7 +15,7 @@ export default function Translator() {
         },
         body: JSON.stringify({
           text: inputText,
-          targetLang: 'ES', // O el idioma al que desees traducir
+          targetLang: 'EN', // O el idioma al que desees traducir
         }),
       });
 
