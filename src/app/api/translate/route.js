@@ -1,5 +1,4 @@
-// src/app/api/translate/route.js
-import { translateText } from '@/../lib/deepl';
+import { translateText } from '@/lib/deepl';
 
 export async function POST(req) {
   try {

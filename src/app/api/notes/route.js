@@ -1,5 +1,5 @@
-import connect from '@/../lib/connect';
-import Note from '@/../models/Note';
+import connect from '@/lib/dbConnection';
+import Note from '@/models/Note';
 
 export async function POST(req) {
   try {
