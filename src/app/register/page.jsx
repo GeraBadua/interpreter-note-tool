@@ -3,15 +3,18 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import Spinner from '../components/Spinner'; // Ensure the Spinner component is correctly imported
 
 const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false); // State to track loading
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading state to true
 
     const res = await fetch('/api/register', {
       method: 'POST',
@@ -26,6 +29,8 @@ const Register = () => {
     });
 
     const data = await res.json();
+    setLoading(false); // Set loading state to false after fetch
+
     if (res.ok) {
       setMessage('Registration successful!');
     } else {
@@ -36,7 +41,7 @@ const Register = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#9c7efd]">
       <div className="bg-white rounded-lg shadow-xl overflow-hidden flex max-w-4xl w-full">
-        {/* Lado izquierdo con imagen */}
+        {/* Left side with image */}
         <div className="w-1/2 relative">
           <Image
             src="/images/imageRegister.jpeg"
@@ -51,7 +56,7 @@ const Register = () => {
           </div>
         </div>
 
-        {/* Lado derecho con formulario */}
+        {/* Right side with form */}
         <div className="w-1/2 p-12">
           <h1 className="text-3xl font-bold text-[#231373] mb-6">Create Account</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -106,6 +111,7 @@ const Register = () => {
               {message}
             </p>
           )}
+          {loading && <Spinner />} {/* Display the Spinner when loading */}
         </div>
       </div>
     </div>

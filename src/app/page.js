@@ -1,43 +1,120 @@
-'use client'; // Este archivo es un componente del lado del cliente
+'use client';
 
+import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import Spinner from './components/Spinner'; // Ensure the path is correct
 
-export default function Home() {
-  
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false); // Add loading state
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true); // Set loading to true when submitting
+
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
+
+    const data = await res.json();
+    setLoading(false); // Set loading to false after response
+
+    if (res.ok) {
+      setMessage('Login successful!');
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('role', data.role);
+      const event = new Event('login');
+      window.dispatchEvent(event);
+      router.push('/home');
+    } else {
+      setMessage(data.message);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-[#f5ebdf]">
-      <main className="container mx-auto px-4 py-16">
-        <section className="text-center">
-          <h1 className="text-5xl font-bold text-[#231373] mb-6">Welcome to Interpreter Note Tool</h1>
-          <p className="text-xl mb-8">Your all-in-one solution for efficient note-taking and translation management.</p>
-          <Link href="/register" className="bg-[#76a82c] hover:bg-[#9c7efd] text-white px-6 py-3 rounded-full text-lg font-semibold">
-            Get Started
-          </Link>
-        </section>
-
-        <section className="mt-16 grid md:grid-cols-3 gap-8">
-          <FeatureCard 
-            title="Smart Note-Taking" 
-            description="Organize your interpretation notes with ease and efficiency."
+    <div className="min-h-screen flex items-center justify-center bg-[#9c7efd]">
+      <div className="bg-white rounded-lg shadow-xl overflow-hidden flex max-w-4xl w-full">
+        <div className="w-1/2 relative">
+          <Image
+            src="/images/imageLogin.jpeg"
+            alt="Login Image"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
+            style={{ objectFit: 'cover' }}
           />
-          <FeatureCard 
-            title="Real-Time Translation" 
-            description="Access quick translations for unfamiliar terms on the fly."
-          />
-          <FeatureCard 
-            title="Appointment Management" 
-            description="Keep track of your interpretation assignments and schedules."
-          />
-        </section>
-      </main>
+          <div className="absolute inset-0 bg-[#231373] bg-opacity-50 flex flex-col justify-center p-12 text-white">
+            <h2 className="text-3xl font-bold mb-6">Welcome Back!</h2>
+            <p className="mb-6">Login to your account to get full experience</p>
+          </div>
+        </div>
+        
+        <div className="w-1/2 p-12">
+          <h1 className="text-3xl font-bold text-[#231373] mb-6">Hello!<br/>Good Morning</h1>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="text-black mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+                  focus:outline-none focus:border-[#76a82c] focus:ring-1 focus:ring-[#76a82c]"
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="text-black mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+                  focus:outline-none focus:border-[#76a82c] focus:ring-1 focus:ring-[#76a82c]"
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <Link href="/forgot-password" className="text-sm text-[#76a82c] hover:underline">
+                Forgot password?
+              </Link>
+            </div>
+            <button
+              type="submit"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#76a82c] hover:bg-[#9c7efd] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#76a82c]"
+            >
+              Login
+            </button>
+          </form>
+          <p className="mt-4 text-sm text-center text-black">
+            Don&apos;t have an account? {' '}
+            <Link href="/register" className="text-[#76a82c] hover:underline">
+              Create Account
+            </Link>
+          </p>
+          {message && (
+            <p className={`mt-4 text-sm ${message.includes('successful') ? 'text-green-600' : 'text-red-600'}`}>
+              {message}
+            </p>
+          )}
+          {loading && <Spinner />} {/* Display Spinner when loading */}
+        </div>
+      </div>
     </div>
   );
-}
+};
 
-const FeatureCard = ({ title, description }) => (
-  <div className="bg-white p-6 rounded-lg shadow-md">
-    <h3 className="text-xl font-semibold text-[#231373] mb-2">{title}</h3>
-    <p className="text-gray-600">{description}</p>
-  </div>
-);
+export default Login;

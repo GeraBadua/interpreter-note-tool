@@ -6,11 +6,11 @@ export async function POST(req) {
   try {
     await connect();
 
-    // Leer el cuerpo de la solicitud como JSON
-    const body = await req.json(); // Corregido: Aquí usamos await req.json() para obtener el cuerpo JSON
+    // Read the request body as JSON
+    const body = await req.json();
     const { username, email, password, role } = body;
 
-    // Verificar si el usuario ya existe
+    // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return new Response(JSON.stringify({ message: 'Email already exists' }), {

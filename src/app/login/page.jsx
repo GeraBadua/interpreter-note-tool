@@ -3,17 +3,19 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // Importar el hook de navegación
-
+import { useRouter } from 'next/navigation';
+import Spinner from '../components/Spinner'; // Correct relative path
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const router = useRouter(); // Instanciar el router
+  const [loading, setLoading] = useState(false); // State to manage loading
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading state to true before the API call
 
     const res = await fetch('/api/login', {
       method: 'POST',
@@ -27,40 +29,39 @@ const Login = () => {
     });
 
     const data = await res.json();
-  if (res.ok) {
-    setMessage('Login successful!');
-    localStorage.setItem('token', data.token); // Guardar token en localStorage
-    localStorage.setItem('role', data.role);   // Guardar rol en localStorage
+    setLoading(false); // Reset loading state after receiving response
 
-    // Despachar el evento personalizado de login para actualizar la navbar
-    const event = new Event('login');
-    window.dispatchEvent(event);
+    if (res.ok) {
+      setMessage('Login successful!');
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('role', data.role);
 
-    router.push('/home'); // Redirigir al usuario a la página principal
-  } else {
-    setMessage(data.message);
-  }
-};
+      const event = new Event('login');
+      window.dispatchEvent(event);
+
+      router.push('/home');
+    } else {
+      setMessage(data.message);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#9c7efd]">
       <div className="bg-white rounded-lg shadow-xl overflow-hidden flex max-w-4xl w-full">
-        {/* Lado izquierdo con imagen */}
         <div className="w-1/2 relative">
           <Image
             src="/images/imageLogin.jpeg"
             alt="Login Image"
-            fill // Reemplaza layout="fill"
+            fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
-            style={{ objectFit: 'cover' }} // Reemplaza objectFit="cover"
+            style={{ objectFit: 'cover' }}
           />
           <div className="absolute inset-0 bg-[#231373] bg-opacity-50 flex flex-col justify-center p-12 text-white">
             <h2 className="text-3xl font-bold mb-6">Welcome Back!</h2>
             <p className="mb-6">Login to your account to get full experience</p>
           </div>
         </div>
-        
-        {/* Lado derecho con formulario */}
+
         <div className="w-1/2 p-12">
           <h1 className="text-3xl font-bold text-[#231373] mb-6">Hello!<br/>Good Morning</h1>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -111,6 +112,7 @@ const Login = () => {
               {message}
             </p>
           )}
+          {loading && <Spinner />} {/* Display Spinner when loading */}
         </div>
       </div>
     </div>
