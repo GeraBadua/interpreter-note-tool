@@ -80,8 +80,9 @@ export default function HomePage() {
           Save Note
         </button>
       </div>
-      <Translator_en></Translator_en>
-      <Translator_es></Translator_es>
+      <div>Español a Inglés<Translator_en></Translator_en></div>
+      
+      <div>English to Spanish<Translator_es></Translator_es></div>
     </div>
   );
 }
