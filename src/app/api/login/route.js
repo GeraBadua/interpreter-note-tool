@@ -22,12 +22,13 @@ export async function POST(req) {
     });
   }
 
+  // Usamos el _id generado por MongoDB en el token
   const token = jwt.sign(
-    { id: user.user_id, role: user.role },  // Incluimos el rol en el token
+    { id: user._id, role: user.role },  // Cambiamos de user.user_id a user._id
     process.env.JWT_SECRET,
     { expiresIn: '1h' }
   );
 
-  // Ahora también devolvemos el rol explícitamente en la respuesta
+  // Devolvemos el token junto con el rol
   return new Response(JSON.stringify({ token, role: user.role }), { status: 200 });
 }
