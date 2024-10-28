@@ -1,18 +1,32 @@
-import * as React from "react"
+import React, { useState } from 'react';
 
-import { cn } from "@/lib/utils"
+const TextArea = () => {
+  const [texto, setTexto] = useState('');
+  
+  // Handle change in text area
+  const handleChange = (e) => {
+    setTexto(e.target.value);
+  };
 
-const Textarea = React.forwardRef(({ className, ...props }, ref) => {
+  
   return (
-    (<textarea
-      className={cn(
-        "flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-        className
-      )}
-      ref={ref}
-      {...props} />)
-  );
-})
-Textarea.displayName = "Textarea"
+    <div>
+      <textarea
+        value={texto}
+        onChange={handleChange}
+        placeholder="Write here..."
+        rows="3"
+        cols="40"
+      />
+      
+      
 
-export { Textarea }
+     {/*  <p>Words: {texto.length}</p>
+       */}
+      
+      
+    </div>
+  );
+};
+
+export default TextArea;

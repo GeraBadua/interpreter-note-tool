@@ -8,13 +8,13 @@ export default function HomePage() {
   const [notes, setNotes] = useState([]);
   const [currentNote, setCurrentNote] = useState({ title: '', content: '' });
   const router = useRouter();
-
+/* 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
       router.push('/login'); // Redirigir al usuario a la página de login si no hay token
     }
-  }, [router]);
+  }, [router]); */
 
   useEffect(() => {
     const savedNotes = JSON.parse(localStorage.getItem('translatorNotes') || '[]');
