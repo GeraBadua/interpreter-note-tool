@@ -11,13 +11,13 @@ export default function HomePage() {
   const [isNotepadOpen, setIsNotepadOpen] = useState(false);
   const [showEnglish, setShowEnglish] = useState(false);
   const router = useRouter();
-/* 
+  
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
       router.push('/login');
     }
-  }, [router]); */
+  }, [router]);
 
   useEffect(() => {
     const savedNotes = JSON.parse(localStorage.getItem('translatorNotes') || '[]');
