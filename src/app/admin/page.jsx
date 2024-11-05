@@ -13,13 +13,12 @@ export default function AdminPage() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login'); // Redirect if not logged in
+    if (!token || localStorage.getItem('role') !== 'Admin') {
+      router.push('/home'); // Redirect if not logged in
     }
-    // Fetch members and requests when the component mounts
+   else {
     fetchMembers(); // BACKEND: Implement endpoint to fetch members
-    fetchTeamRequests(); // BACKEND: Implement endpoint to fetch team requests
-  }, [router]);
+}}, [router]);
 
   const fetchMembers = async () => {
     // BACKEND: Call API to get the list of team members
