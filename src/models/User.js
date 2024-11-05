@@ -1,12 +1,6 @@
-// app/models/User.js
 import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';  // Se puede eliminar si no se necesita
 
 const UserSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-  },
   email: {
     type: String,
     required: true,
@@ -18,22 +12,20 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: 'Interpreter',
+    enum: ['admin', 'interpreter'],
+    default: 'interpreter',
   },
-  created_at: {
-    type: Date,
-    default: Date.now,
+  public_uuid: {
+    type: String,
+    unique: true,
   },
-  updated_at: {
-    type: Date,
-    default: Date.now,
+  private_id: {
+    type: String,
+    unique: true,
+    required: true, // Make sure this is defined
   },
+  // Add other fields as necessary
 });
 
-// Middleware para actualizar `updated_at` al guardar el documento
-UserSchema.pre('save', function (next) {
-  this.updated_at = Date.now();
-  next();
-});
-
+// Export the model, ensuring it doesn't duplicate
 export default mongoose.models.User || mongoose.model('User', UserSchema);
