@@ -30,6 +30,16 @@ export default function AdminDashboard() {
     { id: 2, name: "Team Beta", members: [] },
   ]);
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token || localStorage.getItem('role') !== 'Admin') {
+      router.push('/home'); // Redirect if not logged in
+    }
+   else {
+    fetchMembers(); // BACKEND: Implement endpoint to fetch members
+}}, [router]);
+
+
   const [joinRequests, setJoinRequests] = useState([
     { id: 1, name: "Interpreter C", requestDate: "2024-10-22", accepted: null, detailsVisible: false, email: "c@example.com", joinedDate: "2024-10-21" },
     { id: 2, name: "Interpreter D", requestDate: "2024-10-23", accepted: null, detailsVisible: false, email: "d@example.com", joinedDate: "2024-10-20" },

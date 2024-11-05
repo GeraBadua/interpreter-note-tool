@@ -1,8 +1,8 @@
-"use client"
+'use client';
 
 import { useState } from 'react';
 
-export default function Translator_es() {
+export default function Translator_es({ isVisible }) {
   const [inputText, setInputText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
 
@@ -15,7 +15,7 @@ export default function Translator_es() {
         },
         body: JSON.stringify({
           text: inputText,
-          targetLang: 'ES', // O el idioma al que desees traducir
+          targetLang: 'ES',
         }),
       });
 
@@ -26,16 +26,31 @@ export default function Translator_es() {
     }
   };
 
+  if (!isVisible) return null;
+
   return (
-    <div>
-      <textarea 
-        className="text-black"
-        value={inputText}
-        onChange={(e) => setInputText(e.target.value)}
-        placeholder="Escribe el texto a traducir"
-      />
-      <button onClick={handleTranslate}>Traducir</button>
-      {translatedText && <p>Traducción: {translatedText}</p>}
+    <div className="flex-1 p-8">
+      <div className="notebook-paper">
+        <h2 className="notebook-title">English to Spanish</h2>
+        <textarea
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
+          placeholder="Type the text to translate..."
+          className="notebook-textarea w-full"
+        />
+        <button
+          onClick={handleTranslate}
+          className="notebook-button"
+        >
+          Translate
+        </button>
+        {translatedText && (
+          <div className="translation-result">
+            <h3 className="text-lg font-semibold text-[#2b3481] mb-2">Traducción:</h3>
+            <p className="text-gray-700">{translatedText}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
