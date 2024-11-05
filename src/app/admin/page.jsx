@@ -1,15 +1,34 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Import navigation hook
+import { useState } from 'react';
+import { FaAngleLeft } from 'react-icons/fa6';
+import { FcBusinessman } from 'react-icons/fc';
 
-export default function AdminPage() {
-  const [members, setMembers] = useState([]); // Store team members
-  const [teamRequests, setTeamRequests] = useState([]); // Store team requests
-  const [activeSection, setActiveSection] = useState('members'); // Track which section is active
-  const [selectedMember, setSelectedMember] = useState(null); // Track selected member
+export default function AdminDashboard() {
+  const [activeTab, setActiveTab] = useState('inbox');
+  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [interpreterID, setInterpreterID] = useState('');
+  const [inviteMessage, setInviteMessage] = useState('');
+  const [newTeamName, setNewTeamName] = useState('');
+  const [notesVisible, setNotesVisible] = useState(null);
 
-  const router = useRouter();
+  // Sample notes for interpreters
+  const sampleNotes = [
+    { content: "Note 1: Review the guidelines.", date: "2024-10-24", time: "10:00 AM" },
+    { content: "Note 2: Prepare for the upcoming session.", date: "2024-10-25", time: "11:00 AM" },
+  ];
+
+  const [teams, setTeams] = useState([
+    {
+      id: 1,
+      name: "Team Alpha",
+      members: [
+        { id: 1, name: "Interpreter A", joinedDate: "2024-10-20", notes: sampleNotes },
+        { id: 2, name: "Interpreter B", joinedDate: "2024-10-21", notes: sampleNotes },
+      ],
+    },
+    { id: 2, name: "Team Beta", members: [] },
+  ]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -20,148 +39,203 @@ export default function AdminPage() {
     fetchMembers(); // BACKEND: Implement endpoint to fetch members
 }}, [router]);
 
-  const fetchMembers = async () => {
-    // BACKEND: Call API to get the list of team members
-    const response = await fetch('/api/members');
-    const data = await response.json();
-    setMembers(data); // Set members from backend
+
+  const [joinRequests, setJoinRequests] = useState([
+    { id: 1, name: "Interpreter C", requestDate: "2024-10-22", accepted: null, detailsVisible: false, email: "c@example.com", joinedDate: "2024-10-21" },
+    { id: 2, name: "Interpreter D", requestDate: "2024-10-23", accepted: null, detailsVisible: false, email: "d@example.com", joinedDate: "2024-10-20" },
+  ]);
+
+  // Handler to invite an interpreter by ID
+  const handleInviteInterpreter = (e) => {
+    e.preventDefault();
+    if (interpreterID.trim()) {
+      const foundInterpreter = { id: interpreterID, name: `Interpreter ${interpreterID}`, joinedDate: new Date().toISOString().split('T')[0], notes: [] };
+
+      const updatedTeams = teams.map(team => {
+        if (team.id === selectedTeam.id) {
+          return {
+            ...team,
+            members: [...team.members, foundInterpreter],
+          };
+        }
+        return team;
+      });
+
+      setTeams(updatedTeams);
+      setInviteMessage('Team invite sent. Awaiting interpreter’s response.');
+      setInterpreterID('');
+    } else {
+      setInviteMessage('Please enter a valid interpreter ID.');
+    }
   };
 
-  const fetchTeamRequests = async () => {
-    // BACKEND: Call API to get the list of team requests
-    const response = await fetch('/api/team-requests');
-    const data = await response.json();
-    setTeamRequests(data); // Set requests from backend
+  // Toggle request details visibility
+  const toggleRequestDetails = (id) => {
+    setJoinRequests(joinRequests.map(req => 
+      req.id === id ? { ...req, detailsVisible: !req.detailsVisible } : req
+    ));
   };
 
-  const handleMemberClick = (member) => {
-    setSelectedMember(member); // Display selected member's details
+  // Accept or deny a join request
+  const handleRequestResponse = (id, accept) => {
+    setJoinRequests(joinRequests.map(req => {
+      if (req.id === id) {
+        return { ...req, accepted: accept, detailsVisible: false };
+      }
+      return req;
+    }));
   };
 
-  const acceptRequest = async (requestId) => {
-    // BACKEND: Implement API to accept a team request
-    await fetch(`/api/team-requests/${requestId}`, { method: 'POST' });
-    fetchTeamRequests(); // Refresh requests
-    fetchMembers(); // Refresh members
+  // Create a new team
+  const handleCreateTeam = (e) => {
+    e.preventDefault();
+    if (newTeamName.trim()) {
+      const newTeam = {
+        id: teams.length + 1,
+        name: newTeamName,
+        members: [],
+      };
+      setTeams([...teams, newTeam]);
+      setNewTeamName('');
+    }
   };
 
-  const rejectRequest = async (requestId) => {
-    // BACKEND: Implement API to reject a team request
-    await fetch(`/api/team-requests/${requestId}`, { method: 'DELETE' });
-    fetchTeamRequests(); // Refresh requests
-  };
-
-  const changeRole = async (memberId, newRole) => {
-    // BACKEND: Implement API to change member role
-    await fetch(`/api/members/${memberId}/role`, {
-      method: 'PUT',
-      body: JSON.stringify({ role: newRole }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    fetchMembers(); // Refresh members
-  };
-
-  const removeMember = async (memberId) => {
-    // BACKEND: Implement API to remove member
-    await fetch(`/api/members/${memberId}`, { method: 'DELETE' });
-    fetchMembers(); // Refresh members
+  // Toggle notes visibility
+  const toggleNotesVisibility = (memberId) => {
+    setNotesVisible(notesVisible === memberId ? null : memberId);
   };
 
   return (
-    <div className="flex min-h-screen bg-[#9c7efd] text-white">
+    <div className="flex min-h-screen bg-[url('">
       {/* Sidebar */}
-      <div className="w-64 bg-[#f5ebdf] p-4 overflow-y-auto">
-        <h2 className="text-2xl font-bold mb-4 text-[#231373]">Admin ID: {/** BACKEND: Display admin ID from backend */}</h2>
-        
-        <div className="mb-4">
-          <button onClick={() => setActiveSection('members')} className="w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600">View Members</button>
-        </div>
-        
-        <div className="mb-4">
-          <button onClick={() => setActiveSection('requests')} className="w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Team Requests</button>
-        </div>
-        
-        <div className="mb-4">
-          <button onClick={() => setActiveSection('settings')} className="w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Settings</button>
-        </div>
+      <div className="w-64 bg-white bg-opacity-90 p-4 rounded-lg shadow-2xl">
+        <h2 className="text-2xl font-bold mb-4 text-[#231373]">Admin Dashboard</h2>
+        <button onClick={() => setActiveTab('inbox')} className={`w-full text-left mb-2 ${activeTab === 'inbox' ? 'text-[#76a82c]' : 'text-[#231373]'}`}>
+          Inbox
+        </button>
+        <button onClick={() => setActiveTab('teams')} className={`w-full text-left mb-2 ${activeTab === 'teams' ? 'text-[#76a82c]' : 'text-[#231373]'}`}>
+          Teams
+        </button>
       </div>
 
       {/* Main content */}
       <div className="flex-1 p-8">
-        {activeSection === 'members' && (
-          <>
-            <h2 className="text-2xl font-bold text-blue-800 mb-4">Team Members</h2>
-            {members.map((member) => (
-              <div key={member.id} className="p-4 bg-white rounded shadow mb-2" onClick={() => handleMemberClick(member)}>
-                <h3 className="font-bold text-blue-800">{member.name} ({member.status})</h3>
-                {selectedMember && selectedMember.id === member.id && (
-                  <div className="mt-2">
-                    <div className="mb-2 bg-gray-200 p-2 rounded">
-                      <h4 className="font-semibold">Profile</h4>
-                      <p>ID: {selectedMember.id}</p>
-                      <p>Role: {selectedMember.role}</p>
-                      <button onClick={() => changeRole(member.id, selectedMember.role === 'admin' ? 'interpreter' : 'admin')} className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
-                        Change to {selectedMember.role === 'admin' ? 'Interpreter' : 'Admin'}
-                      </button>
-                      <button onClick={() => removeMember(member.id)} className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 ml-2">
-                        Remove
-                      </button>
-                    </div>
-                    <div className="mb-2">
-                      <h4 className="font-semibold">Notes</h4>
-                      {selectedMember.notes.map((note) => (
-                        <div key={note.id} className="mb-1">
-                          <strong>{note.title}</strong> - <span>{note.date}</span>
-                          <p className="bg-gray-100 p-2 rounded">{note.content}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </>
-        )}
-
-        {/* Team Requests Section */}
-        {activeSection === 'requests' && (
-          <>
-            <h2 className="text-2xl font-bold text-blue-800 mb-4">Team Requests</h2>
-            {teamRequests.length > 0 ? (
-              teamRequests.map((request) => (
-                <div key={request.id} className="p-4 bg-white rounded shadow mb-2">
-                  <h3 className="font-bold text-blue-800">{request.name}</h3>
-                  <p className="text-blue-800">Requested on: {request.date}</p>
-                  <div className="mt-2">
-                    <button
-                      className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 mr-2"
-                      onClick={() => acceptRequest(request.id)}
-                    >
-                      Accept
-                    </button>
-                    <button
-                      className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                      onClick={() => rejectRequest(request.id)}
-                    >
-                      Reject
-                    </button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-blue-800">No pending requests</p>
-            )}
-          </>
-        )}
-
-        {/* Settings Section */}
-        {activeSection === 'settings' && (
+        {activeTab === 'inbox' && (
           <div>
-            <h2 className="text-2xl font-bold text-blue-800 mb-4">Settings</h2>
-            <p className="text-blue-800">Settings options will be here.</p>
-            {/* BACKEND: Implement settings options as needed */}
+            <h1 className="text-3xl font-bold mb-6 text-[#231373]">Interpreter Join Requests</h1>
+            <div className="bg-white bg-opacity-90 rounded p-4 shadow-lg">
+              {joinRequests.length === 0 ? (
+                <p>No join requests at the moment.</p>
+              ) : (
+                joinRequests.map((request) => (
+                  <div key={request.id} className="mb-2">
+                    <div 
+                      className={`p-2 bg-[#231373] rounded cursor-pointer text-white ${request.accepted === null ? '' : request.accepted ? 'bg-green-500' : 'bg-red-500'}`} 
+                      onClick={() => toggleRequestDetails(request.id)}
+                    >
+                      <FcBusinessman className="inline-block mr-2" />
+                      <h3 className="font-bold text-[#9c7efd]">{request.name}</h3>
+                      <p className="text-[#e1e8ec]">Requested on: {request.requestDate}</p>
+                    </div>
+                    {request.detailsVisible && (
+                      <div className="mt-2 p-2 bg-white bg-opacity-90 rounded shadow-md">
+                      <p className="text-lg font-semibold text-black">Interpreter Information:</p>
+                      <p className="text-black">Email: {request.email}</p>
+                      <p className="text-black">Joined Date: {request.joinedDate}</p>
+                      <button 
+                        className="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
+                        onClick={() => handleRequestResponse(request.id, true)}
+                      >
+                        Accept
+                      </button>
+                      <button 
+                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
+                        onClick={() => handleRequestResponse(request.id, false)}
+                      >
+                        Deny
+                      </button>
+                    </div>
+                    )}
+                    {request.accepted === true && (
+                      <p className="mt-2 text-green-500">Request Accepted!</p>
+                    )}
+                    {request.accepted === false && (
+                      <p className="mt-2 text-red-500">Request Denied.</p>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'teams' && (
+          <div>
+            <h1 className="text-3xl font-bold mb-6 text-[#231373]">Teams</h1>
+            {!selectedTeam ? (
+              // Display list of teams
+              <div>
+                {teams.map((team) => (
+                  <div key={team.id} className="mb-2 p-2 bg-[#231373] rounded cursor-pointer" onClick={() => setSelectedTeam(team)}>
+                    <h3 className="font-bold text-[#9c7efd]">
+                      {team.name} <span className="text-sm text-white"> (ID: {team.id})</span>
+                    </h3>
+                    <p className="text-[#e1e8ec]">Members: {team.members.length}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div>
+                <button onClick={() => setSelectedTeam(null)} className="flex items-center text-[#76a82c] hover:text-[#f3ba00] mb-4">
+                  <FaAngleLeft className="mr-2" /> Back to Teams
+                </button>
+                <h2 className="text-2xl font-bold mb-4 text-[#231373]">{selectedTeam.name} Members</h2>
+                {selectedTeam.members.length === 0 ? (
+                  <p>No members in this team.</p>
+                ) : (
+                  selectedTeam.members.map((member) => (
+                    <div key={member.id} className="mb-2 p-2 bg-[#e8e8e8] rounded">
+                      <h4 className="font-bold text-[#231373]">{member.name}</h4>
+                      <p className="text-gray-600">Joined on: {member.joinedDate}</p>
+                      <button onClick={() => toggleNotesVisibility(member.id)} className="mt-2 text-blue-500 hover:underline">
+                        {notesVisible === member.id ? 'Hide Notes' : 'Show Notes'}
+                      </button>
+                      {notesVisible === member.id && (
+                        <div className="mt-2">
+                          {member.notes.map((note, index) => (
+                            <div key={index} className="border border-gray-300 p-2 rounded mb-1">
+                              <p style={{ color: 'black' }}>{note.content}</p>
+                              <p className="text-xs text-gray-500">{note.date} at {note.time}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))
+                )}
+                <form onSubmit={handleInviteInterpreter} className="mt-4">
+                  <input 
+                    type="text" 
+                    value={interpreterID} 
+                    onChange={(e) => setInterpreterID(e.target.value)} 
+                    placeholder="Interpreter ID" 
+                    className="p-2 border border-gray-400 rounded w-full"
+                  />
+                  <button type="submit" className="mt-2 bg-[#76a82c] text-white font-bold py-2 px-4 rounded">Invite Interpreter</button>
+                  {inviteMessage && <p className="mt-2">{inviteMessage}</p>}
+                </form>
+              </div>
+            )}
+            <form onSubmit={handleCreateTeam} className="mt-4">
+              <input 
+                type="text" 
+                value={newTeamName} 
+                onChange={(e) => setNewTeamName(e.target.value)} 
+                placeholder="New Team Name" 
+                className="p-2 border border-gray-400 rounded w-full"
+              />
+              <button type="submit" className="mt-2 bg-[#76a82c] text-white font-bold py-2 px-4 rounded">Create Team</button>
+            </form>
           </div>
         )}
       </div>
