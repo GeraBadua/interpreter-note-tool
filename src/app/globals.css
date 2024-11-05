@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer components {
+  .notebook-paper {
+    background: #fff;
+    background-image: 
+      linear-gradient(90deg, transparent 39px, #ff9999 39px, #ff9999 41px, transparent 41px),
+      linear-gradient(#e5e5e5 0.1em, transparent 0.1em);
+    background-size: 100% 1.2em;
+    position: relative;
+    padding: 40px 40px 40px 80px;
+    border-radius: 10px;
+    box-shadow: 
+      0 0 3px rgba(0,0,0,0.1),
+      0 10px 20px rgba(0,0,0,0.2);
+    border-top: 1px solid #eee;
+  }
+
+  .notebook-paper::before {
+    content: '';
+    position: absolute;
+    left: 45px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #ff9999;
+  }
+
+  .notebook-title {
+    font-family: 'Courier New', monospace;
+    color: #2b3481;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+  }
+
+  .notebook-textarea {
+    background: transparent;
+    line-height: 1.2em;
+    padding: 0;
+    resize: vertical;
+    border: none;
+    font-family: 'Courier New', monospace;
+    color: #444;
+    min-height: 200px;
+  }
+
+  .notebook-textarea:focus {
+    outline: none;
+  }
+
+  .notebook-button {
+    background: #2b3481;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: none;
+    font-family: 'Courier New', monospace;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .notebook-button:hover {
+    background: #3c4bb0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+
+  .sidebar-button {
+    width: 90%;
+    margin: 10px auto;
+    display: block;
+    padding: 10px;
+    background: #76a82c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+  }
+
+  .sidebar-button:hover {
+    background: #8bc34a;
+    transform: translateY(-1px);
+  }
+
+  .translation-result {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(43, 52, 129, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid #2b3481;
+  }
+}
