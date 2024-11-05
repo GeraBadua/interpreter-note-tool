@@ -12,7 +12,6 @@ export default function HomePage() {
   const [showEnglish, setShowEnglish] = useState(false);
   const router = useRouter();
   
-
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -35,10 +34,10 @@ export default function HomePage() {
     <div className="flex min-h-screen bg-[#9c7efd] text-white">
       {/* Sidebar */}
       <div className="w-64 bg-[#f5ebdf] p-4 overflow-y-auto">
-      <h2 className="text-2xl font-bold mb-4 text-[#231373]">Saved Notes</h2>
+        <h2 className="text-2xl font-bold mb-4 text-[#231373]">Saved Notes</h2>
         <button
           onClick={() => setIsNotepadOpen(true)}
-          className='px-4 py-2 bg-[#76a82c] text-[#01587a] rounded hover:bg-[#99d8dd] transition-colors duration-300'
+          className='w-11/12 mx-auto px-4 py-2 bg-[#76a82c] text-[#01587a] rounded hover:bg-[#99d8dd] transition-colors duration-300'
         >
           New
         </button>
@@ -55,6 +54,7 @@ export default function HomePage() {
           </div>
         ))}
       </div>
+      
       <div className="flex-1 flex flex-col">
         <div className="p-4 flex justify-center">
           <button
@@ -67,6 +67,14 @@ export default function HomePage() {
         <Translator_en isVisible={!showEnglish} />
         <Translator_es isVisible={showEnglish} />
       </div>
+
+      {/* Añadir el componente Notepad aquí */}
+      <Notepad
+        notes={notes}
+        setNotes={setNotes}
+        isOpen={isNotepadOpen}
+        setIsOpen={setIsNotepadOpen}
+      />
     </div>
   );
 }
