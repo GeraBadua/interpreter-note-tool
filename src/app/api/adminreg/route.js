@@ -1,10 +1,7 @@
-// api/adminreg/route.js
-
 import connect from '@/lib/dbConnection';
 import User from '@/models/User';
 import Team from '@/models/Team';
 import bcrypt from 'bcryptjs';
-import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(req) {
   try {
@@ -35,12 +32,8 @@ export async function POST(req) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Generate only the public UUID
-    const publicUUID = uuidv4();
-
     // Create new admin user
     const newUser = new User({
-      public_uuid: publicUUID,
       username,
       email,
       password_hash: hashedPassword,
@@ -51,14 +44,14 @@ export async function POST(req) {
 
     // Create new team associated with the admin
     const newTeam = new Team({
-      admin_public_uuid: publicUUID,
+      admin_email: email,
       team_name: `${username}'s Team`,
     });
 
     await newTeam.save();
 
     return new Response(
-      JSON.stringify({ message: 'Admin registered successfully', publicUUID }),
+      JSON.stringify({ message: 'Admin registered successfully'}),
       { status: 201 }
     );
   } catch (error) {

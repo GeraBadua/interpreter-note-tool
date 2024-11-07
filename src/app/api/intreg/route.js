@@ -1,9 +1,6 @@
-// api/intreg/route.js
-
 import connect from '@/lib/dbConnection';
 import User from '@/models/User';
 import bcrypt from 'bcryptjs';
-import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(req) {
   try {
@@ -35,12 +32,8 @@ export async function POST(req) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Generate only the public UUID
-    const publicUUID = uuidv4();
-
     // Create new interpreter user
     const newUser = new User({
-      public_uuid: publicUUID,
       username,
       email,
       password_hash: hashedPassword,
@@ -50,7 +43,7 @@ export async function POST(req) {
     await newUser.save();
 
     return new Response(
-      JSON.stringify({ message: 'Interpreter registered successfully', publicUUID }),
+      JSON.stringify({ message: 'Interpreter registered successfully'}),
       { status: 201 }
     );
   } catch (error) {

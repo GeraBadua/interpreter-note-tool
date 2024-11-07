@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { FaAngleLeft } from 'react-icons/fa6';
 import { FcBusinessman } from 'react-icons/fc';
+import React, { useEffect } from 'react';
+import router from 'next/router';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('inbox');
@@ -36,7 +38,7 @@ export default function AdminDashboard() {
       router.push('/home'); // Redirect if not logged in
     }
    else {
-    fetchMembers(); // BACKEND: Implement endpoint to fetch members
+    // fetchMembers(); // BACKEND: Implement endpoint to fetch members0
 }}, [router]);
 
 

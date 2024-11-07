@@ -1,5 +1,3 @@
-// models/Team.js
-
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -9,13 +7,9 @@ const TeamSchema = new mongoose.Schema({
     default: uuidv4, // Generate a unique team ID
     unique: true,
   },
-  admin_private_id: {
+  admin_email: {
     type: String,
-    required: true, // Links to the admin's private ID
-  },
-  admin_public_uuid: {
-    type: String,
-    required: true, // Links to the admin's public UUID, used by interpreters to send join requests
+    required: true, 
   },
   team_name: {
     type: String,
@@ -28,6 +22,10 @@ const TeamSchema = new mongoose.Schema({
     },
   ],
   created_at: {
+    type: Date,
+    default: Date.now,
+  },
+  updated_at: {
     type: Date,
     default: Date.now,
   },

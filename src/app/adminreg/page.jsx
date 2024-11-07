@@ -28,6 +28,9 @@ const AdminRegister = () => {
     const data = await res.json();
     if (res.ok) {
       setMessage('Admin registration successful!');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 2000);
     } else {
       setMessage(data.message);
     }

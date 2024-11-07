@@ -28,6 +28,9 @@ const InterpreterRegister = () => {
     const data = await res.json();
     if (res.ok) {
       setMessage('Interpreter registration successful!');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 2000);
     } else {
       setMessage(data.message);
     }

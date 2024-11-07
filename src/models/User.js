@@ -1,6 +1,17 @@
 import mongoose from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';  // Para generar UUID
 
 const UserSchema = new mongoose.Schema({
+  user_id: {
+    type: String,
+    default: uuidv4,  // Genera UUID automáticamente
+    unique: true,
+  },
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   email: {
     type: String,
     required: true,
@@ -12,20 +23,23 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'interpreter'],
-    default: 'interpreter',
+    enum: ['Interpreter', 'Admin'],
+    required: true,
   },
-  public_uuid: {
-    type: String,
-    unique: true,
+  created_at: {
+    type: Date,
+    default: Date.now,
   },
-  private_id: {
-    type: String,
-    unique: true,
-    required: true, // Make sure this is defined
+  updated_at: {
+    type: Date,
+    default: Date.now,
   },
-  // Add other fields as necessary
 });
 
-// Export the model, ensuring it doesn't duplicate
+// Middleware to update `updated_at` on document update
+UserSchema.pre('save', function (next) {
+  this.updated_at = Date.now();
+  next();
+});
+
 export default mongoose.models.User || mongoose.model('User', UserSchema);
