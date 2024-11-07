@@ -10,24 +10,59 @@ export default function HomePage() {
   const [notes, setNotes] = useState([]);
   const [isNotepadOpen, setIsNotepadOpen] = useState(false);
   const [showEnglish, setShowEnglish] = useState(false);
+  const [message, setMessage] = useState('');
   const router = useRouter();
-  
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
       router.push('/login');
+    } else {
+      fetchUserNotes(token);
     }
   }, [router]);
 
-  useEffect(() => {
-    const savedNotes = JSON.parse(localStorage.getItem('translatorNotes') || '[]');
-    setNotes(savedNotes);
-  }, []);
+  const fetchUserNotes = async (token) => {
+    try {
+      const res = await fetch('/api/notes', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setNotes(data);
+      } else {
+        setMessage('Failed to fetch notes.');
+      }
+    } catch (error) {
+      console.error('Error fetching user notes:', error);
+    }
+  };
 
-  const deleteNote = (id) => {
-    const updatedNotes = notes.filter(note => note.id !== id);
-    setNotes(updatedNotes);
-    localStorage.setItem('translatorNotes', JSON.stringify(updatedNotes));
+  const deleteNote = async (id) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setMessage("User is not authenticated. Please log in first.");
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/notes/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      if (res.ok) {
+        setNotes((prevNotes) => prevNotes.filter(note => note._id !== id));
+      } else {
+        setMessage('Failed to delete note.');
+      }
+    } catch (error) {
+      console.error('Error deleting note:', error);
+    }
   };
 
   return (
@@ -42,11 +77,11 @@ export default function HomePage() {
           New
         </button>
         {notes.map((note) => (
-          <div key={note.id} className="mb-2 p-2 bg-[#231373] rounded">
-            <h3 className="font-bold text-[#9c7efd]">{note.title}</h3>
-            <p className="text-sm text-[#e1e8ec] truncate">{note.content}</p>
+          <div key={note._id} className="mb-2 p-2 bg-[#231373] rounded">
+            <h3 className="font-bold text-[#9c7efd]">{note.note_title}</h3>
+            <p className="text-sm text-[#e1e8ec] truncate">{note.note}</p>
             <button
-              onClick={() => deleteNote(note.id)}
+              onClick={() => deleteNote(note._id)}
               className="mt-1 text-xs text-[#76a82c] hover:text-[#f3ba00]"
             >
               Delete
@@ -54,7 +89,7 @@ export default function HomePage() {
           </div>
         ))}
       </div>
-      
+
       <div className="flex-1 flex flex-col">
         <div className="p-4 flex justify-center">
           <button
@@ -75,6 +110,7 @@ export default function HomePage() {
         isOpen={isNotepadOpen}
         setIsOpen={setIsNotepadOpen}
       />
+      {message && <p className="text-red-500 text-center mt-4">{message}</p>}
     </div>
   );
 }

@@ -9,7 +9,17 @@ export async function POST(req) {
 
     // Leer el cuerpo de la solicitud como JSON
     const body = await req.json();
-    const { note_title, topic, note, token } = body;
+    const { note_title, topic, note } = body;
+
+    // Obtener el token del header Authorization
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ message: 'JWT must be provided' }), {
+        status: 400,
+      });
+    }
+
+    const token = authHeader.split(' ')[1];
 
     // Verificar y decodificar el token para obtener el userId
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -81,4 +91,3 @@ export async function GET(req) {
     });
   }
 }
-

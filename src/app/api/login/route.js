@@ -26,7 +26,7 @@ export async function POST(req) {
   const token = jwt.sign(
     { id: user._id, role: user.role },  // Cambiamos de user.user_id a user._id
     process.env.JWT_SECRET,
-    { expiresIn: '1h' }
+    // { expiresIn: '1h' }
   );
 
   // Devolvemos el token junto con el rol

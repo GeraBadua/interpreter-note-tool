@@ -3,28 +3,52 @@
 import { useState, useEffect } from 'react';
 
 export default function Notepad({ notes, setNotes, isOpen, setIsOpen }) {
-  const [currentNote, setCurrentNote] = useState({ title: '', content: '' });
+  const [currentNote, setCurrentNote] = useState({ title: '', topic: '', content: '' });
+  const [message, setMessage] = useState('');
 
-  // Prevenir scroll del body cuando el modal está abierto
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
+    document.body.style.overflow = isOpen ? 'hidden' : 'unset';
     return () => {
       document.body.style.overflow = 'unset';
     };
   }, [isOpen]);
 
-  const saveNote = () => {
-    if (currentNote.title.trim() === '' && currentNote.content.trim() === '') return;
+  const saveNote = async () => {
+    if (!currentNote.title.trim() || !currentNote.content.trim()) return;
 
-    const newNotes = [...notes, { ...currentNote, id: Date.now() }];
-    setNotes(newNotes);
-    localStorage.setItem('translatorNotes', JSON.stringify(newNotes));
-    setCurrentNote({ title: '', content: '' });
-    setIsOpen(false);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setMessage("Token not found.");
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/notes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          note_title: currentNote.title,
+          topic: currentNote.topic,
+          note: currentNote.content,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setNotes((prevNotes) => [...prevNotes, data.note]);
+        setCurrentNote({ title: '', topic: '', content: '' });
+        setIsOpen(false);
+        setMessage('Note saved successfully!');
+      } else {
+        setMessage(data.message);
+      }
+    } catch (error) {
+      console.error('Error saving note:', error);
+      setMessage('An error occurred while saving the note.');
+    }
   };
 
   if (!isOpen) return null;
@@ -49,6 +73,13 @@ export default function Notepad({ notes, setNotes, isOpen, setIsOpen }) {
             onChange={(e) => setCurrentNote({ ...currentNote, title: e.target.value })}
             className="w-full p-2 mb-4 bg-white text-black rounded border border-gray-300"
           />
+          <input
+            type="text"
+            placeholder="Topic"
+            value={currentNote.topic}
+            onChange={(e) => setCurrentNote({ ...currentNote, topic: e.target.value })}
+            className="w-full p-2 mb-4 bg-white text-black rounded border border-gray-300"
+          />
           <textarea
             placeholder="Your notes here..."
             value={currentNote.content}
@@ -69,6 +100,7 @@ export default function Notepad({ notes, setNotes, isOpen, setIsOpen }) {
               Save Note
             </button>
           </div>
+          {message && <p className="mt-4 text-red-500">{message}</p>}
         </div>
       </div>
     </div>
