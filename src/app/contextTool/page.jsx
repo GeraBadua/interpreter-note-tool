@@ -1,45 +1,66 @@
-'use client';
-
+'use client'; // This file is a client-side component
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'; // Import useRouter hook
 import TextArea from '../components/textarea';
-import { Button } from '../components/button';
+import { Button } from '../components/button'; // Corrected import path
 
-export default function ContextTool() {
+export default function contextTool() {
   const [context, setContext] = useState('');
   const [wordBank, setWordBank] = useState([]);
   const [translation, setTranslation] = useState('');
-  const [notes, setNotes] = useState('');
-  const [savedNotes, setSavedNotes] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 5;
-  const router = useRouter();
+  const [notes, setNotes] = useState(''); // State to manage the notes text
+  const [savedNotes, setSavedNotes] = useState([]); // State to manage saved notes
 
-  const goToGlossaryPage = () => {
-    router.push('/glossaryBox');
+  const [currentPage, setCurrentPage] = useState(1); // State for current page in pagination
+  const notesPerPage = 5; // Set the number of notes per page
+
+  const router = useRouter(); // Initialize the useRouter hook
+
+  // Calculate the current notes to display based on pagination
+  const indexOfLastNote = currentPage * notesPerPage;
+  const indexOfFirstNote = indexOfLastNote - notesPerPage;
+  const currentNotes = savedNotes.slice(indexOfFirstNote, indexOfLastNote);
+
+  const totalPages = Math.ceil(savedNotes.length / notesPerPage);
+
+  // Handle changing pages
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
   };
 
+  // Function to handle context input change
   const handleContextChange = (e) => {
     const newContext = e.target.value;
     setContext(newContext);
 
+    // Update the word bank
     const updatedWordBank = newContext
       ? newContext.split(' ').map((word) => word.toLowerCase())
       : [];
     setWordBank(updatedWordBank);
   };
 
+  // Function to handle translation API call
   const fetchTranslation = async (text) => {
     try {
-      const response = await fetch('https://api.deepl.com/v2/translate', {
+      // Call the translation API (replace with actual API URL)
+      const response = await fetch('https://api.deepl.com/v2/translate', { // Replace with actual API
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, target_lang: 'es' }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text,   // The text to be translated
+          target_lang: 'es', // Target language for translation (example: Spanish)
+        }),
       });
+
       const data = await response.json();
 
       if (response.ok) {
-        setTranslation(data.translatedText);
+        setTranslation(data.translatedText); // Assuming the API returns the translation as 'translatedText'
       } else {
         console.error('Error fetching translation:', response.statusText);
       }
@@ -48,30 +69,36 @@ export default function ContextTool() {
     }
   };
 
+  // UseEffect to fetch translation when context changes
   useEffect(() => {
     if (context) {
-      fetchTranslation(context);
+      fetchTranslation(context); // Fetch translation when context changes
     }
   }, [context]);
 
+  // Function to handle saving notes
   const handleSaveNote = () => {
-    setSavedNotes([...savedNotes, notes]);
-    setNotes('');
-    router.push('/home');
+    setSavedNotes([...savedNotes, notes]); // Add the current notes to savedNotes array
+    setNotes(''); // Clear the notes after saving
+
+    // Navigate back to home after saving
+    router.push('/home'); // Programmatic navigation to the home page
   };
 
   return (
-    <div className="min-h-screen bg-[#cdc4fd] flex flex-col justify-between">
+    <div className="min-h-screen bg-[#cdc4fd]">
       <main className="container mx-auto px-4 py-16">
         <section className="mt-16 grid md:grid-cols-3 gap-8">
-          <FeatureCard title="Context" description="Add the context word of your call">
+          {/* First FeatureCard: Note Taking */}
+          <FeatureCard title="Translate" description="Please add here the word of translate">
             <TextArea value={context} onChange={handleContextChange} />
-            <Button className="mt-4 bg-[#231373] text-white hover:bg-[#1c125c] transition duration-300 ease-in-out">
-              Give word of context
+            <Button onClick={() => fetchTranslation(context)}>
+              Translate word
             </Button>
           </FeatureCard>
 
-          <FeatureCard title="Word bank" description="Words for the call context">
+          {/* Second FeatureCard: Word Bank */}
+          <FeatureCard title="Context" description="Here is the context of the words that you need for the context of the call ">
             <ul>
               {wordBank.map((word, index) => (
                 <li key={index} className="text-gray-600">{word}</li>
@@ -79,63 +106,68 @@ export default function ContextTool() {
             </ul>
           </FeatureCard>
 
-          <FeatureCard title="Meaning" description="Meaning of these words">
-            <p>{translation || 'Here are some words to help you in this call'}</p>
+          {/* Third FeatureCard: Translation Management */}
+          <FeatureCard title="Meaning" description="What these words mean">
+            <p>{translation || 'No translation available yet'}</p>
           </FeatureCard>
 
-          <Button 
-            onClick={goToGlossaryPage}
-            className="bg-[#231373] text-white hover:bg-[#1c125c] transition duration-300 ease-in-out">
-            Go to glossary
+          <Button onClick={handleSaveNote}>
+            Save note
           </Button>
         </section>
-      </main>
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+        {/* Saved Notes with Pagination */}
+        <section className="mt-12">
+          <h2 className="text-2xl font-semibold text-[#231373] mb-4">Saved Notes</h2>
+          {currentNotes.length > 0 ? (
+            <ul className="bg-white p-6 rounded-lg shadow-md">
+              {currentNotes.map((note, index) => (
+                <li key={index} className="text-gray-600 mb-2">
+                  {note}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-600">No saved notes.</p>
+          )}
+
+          {/* Pagination Controls */}
+          <div className="flex justify-center items-center mt-4 space-x-2">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`px-4 py-2 rounded-lg ${
+                currentPage === 1 ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-[#231373] text-white'
+              }`}
+            >
+              Previous
+            </button>
+
+            <span className="text-[#231373] font-semibold">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`px-4 py-2 rounded-lg ${
+                currentPage === totalPages ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-[#231373] text-white'
+              }`}
+            >
+              Next
+            </button>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }
 
+// FeatureCard component to render each card
 const FeatureCard = ({ title, description, children }) => (
-  <div className="bg-white p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+  <div className="bg-white p-6 rounded-lg shadow-md">
     <h3 className="text-xl font-semibold text-[#231373] mb-2">{title}</h3>
     <p className="text-gray-600 mb-4">{description}</p>
     {children}
   </div>
 );
-
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-  const handlePrevious = () => {
-    if (currentPage > 1) {
-      onPageChange(currentPage - 1);
-    }
-  };
-
-  const handleNext = () => {
-    if (currentPage < totalPages) {
-      onPageChange(currentPage + 1);
-    }
-  };
-
-  return (
-    <div className="fixed bottom-0 left-0 right-0 bg-[#231373] text-white py-4 flex justify-center items-center space-x-4">
-      <button 
-        onClick={handlePrevious} 
-        disabled={currentPage === 1} 
-        className="px-4 py-2 bg-[#231373] text-white rounded-md hover:bg-[#1c125c] disabled:bg-gray-500">
-        Previous
-      </button>
-      <span>Page {currentPage} of {totalPages}</span>
-      <button 
-        onClick={handleNext} 
-        disabled={currentPage === totalPages} 
-        className="px-4 py-2 bg-[#231373] text-white rounded-md hover:bg-[#1c125c] disabled:bg-gray-500">
-        Next
-      </button>
-    </div>
-  );
-};
