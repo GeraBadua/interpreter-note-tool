@@ -1,0 +1,38 @@
+name: Next.js PR Review
+
+on:
+  pull_request:
+    branches:
+      - main
+      - Development/*
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Paso 1: Checkout del código
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Paso 2: Configurar Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Asegúrate de usar la versión que necesita tu proyecto
+
+      # Paso 3: Instalar dependencias
+      - name: Install dependencies
+        run: npm install
+
+      # Paso 4: Ejecutar ESLint
+      - name: Run ESLint
+        run: npx eslint . --ext .js,.jsx,.ts,.tsx
+
+      # Paso 5: Ejecutar pruebas de Next.js
+      - name: Run Next.js Tests
+        run: npm test
+
+      # Paso 6: Verificar que Next.js pueda compilarse
+      - name: Build Next.js application
+        run: npm run build
