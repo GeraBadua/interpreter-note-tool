@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Asegúrate de importar useRouter
+import { useState } from 'react';
 
 
 export default function WordSearch() {
@@ -9,7 +8,6 @@ export default function WordSearch() {
   const [results, setResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [resultsPerPage] = useState(5); // Número de resultados por página
-  const router = useRouter();
 
 
   const searchWord = async () => {
