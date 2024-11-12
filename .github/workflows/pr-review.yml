@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - main
-      - Development/*
+      - Development
 
 jobs:
   lint-and-test:
