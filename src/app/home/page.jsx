@@ -1,8 +1,8 @@
 'use client';
 
-import Translator_es from '@/app/components/translate_es';
-import Translator_en from '@/app/components/translate_en';
-import Notepad from '@/app/components/notepad';
+import Translator_es from '../components/translate_es';
+import Translator_en from '../components/translate_en';
+import Notepad from '../components/notepad';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 

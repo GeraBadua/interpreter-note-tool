@@ -1,4 +1,4 @@
-/ __tests__/Login.test.js
+
 import { render, screen, fireEvent } from '@testing-library/react';
 // __tests__/simpleLogin.test.js
 
