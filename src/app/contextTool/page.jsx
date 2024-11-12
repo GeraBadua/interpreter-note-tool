@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'; // Import useRouter hook
 import TextArea from '../components/textarea';
 import { Button } from '../components/button'; // Corrected import path
 
-export default function contextTool() {
+export default function ContextTool() {
   const [context, setContext] = useState('');
   const [wordBank, setWordBank] = useState([]);
   const [translation, setTranslation] = useState('');
