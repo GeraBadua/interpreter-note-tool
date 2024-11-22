@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const Register = () => {
+const InterpreterRegister = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,7 +13,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch('/api/register', {
+    const res = await fetch('/api/intreg', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -27,7 +27,10 @@ const Register = () => {
 
     const data = await res.json();
     if (res.ok) {
-      setMessage('Registration successful!');
+      setMessage('Interpreter registration successful!');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 2000);
     } else {
       setMessage(data.message);
     }
@@ -36,7 +39,8 @@ const Register = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#9c7efd]">
       <div className="bg-white rounded-lg shadow-xl overflow-hidden flex max-w-4xl w-full">
-        {/* Lado izquierdo con imagen */}
+        
+        {/* Left Side with Image */}
         <div className="w-1/2 relative">
           <Image
             src="/images/imageRegister.jpeg"
@@ -46,14 +50,14 @@ const Register = () => {
             className="object-cover"
           />
           <div className="absolute inset-0 bg-[#231373] bg-opacity-50 flex flex-col justify-center p-12 text-white">
-            <h2 className="text-3xl font-bold mb-6">Join Us Today!</h2>
-            <p className="mb-6">Create an account to start your journey</p>
+            <h2 className="text-3xl font-bold mb-6">Join Us as an Interpreter!</h2>
+            <p className="mb-6">Create an interpreter account to start joining teams.</p>
           </div>
         </div>
 
-        {/* Lado derecho con formulario */}
+        {/* Right Side with Form */}
         <div className="w-1/2 p-12">
-          <h1 className="text-3xl font-bold text-[#231373] mb-6">Create Account</h1>
+          <h1 className="text-3xl font-bold text-[#231373] mb-6">Interpreter Registration</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
@@ -92,11 +96,11 @@ const Register = () => {
               type="submit"
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#76a82c] hover:bg-[#9c7efd] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#76a82c]"
             >
-              Register
+              Register as Interpreter
             </button>
           </form>
           <p className="mt-4 text-sm text-center text-black">
-            Already have an account? {' '}
+            Already an interpreter? {' '}
             <Link href="/login" className="text-[#76a82c] hover:underline">
               Login here
             </Link>
@@ -112,4 +116,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default InterpreterRegister;

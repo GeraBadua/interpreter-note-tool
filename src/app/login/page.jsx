@@ -36,10 +36,15 @@ const Login = () => {
     const event = new Event('login');
     window.dispatchEvent(event);
 
-    router.push('/home'); // Redirigir al usuario a la página principal
+    // Redirigir al usuario a la página principal o a la de admin segun
+    if (data.role === 'Admin') {
+      router.push('/admin')
+    } if (data.role === 'Interpreter') {
+      router.push('/home')
   } else {
     setMessage(data.message);
   }
+};
 };
 
   return (

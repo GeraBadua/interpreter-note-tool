@@ -23,8 +23,8 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['Interpreter', 'qa', 'Admin', 'tech_support'],
-    default: 'Interpreter',
+    enum: ['Interpreter', 'Admin'],
+    required: true,
   },
   created_at: {
     type: Date,
@@ -43,4 +43,3 @@ UserSchema.pre('save', function (next) {
 });
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);
-
