@@ -1,92 +1,85 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Settings, UserCircle, LogOut, ChevronDown } from 'lucide-react';
+import { useState } from "react";
+import { MdEmail, MdLock, MdSecurity, MdDevices } from "react-icons/md";
 
-const ProfileMenu = ({ onLogout }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [userName, setUserName] = useState('User');
-  const menuRef = useRef(null);
+const ProfilePage = () => {
+  const [userData, setUserData] = useState({
+    name: "Alonso Corona",
+    email: "alonsocorona093@gmail.com",
+    password: "********",
+  });
 
-  useEffect(() => {
-    // Obtener el nombre de usuario del localStorage o de donde lo tengas guardado
-    const storedName = localStorage.getItem('userName') || 'User';
-    setUserName(storedName);
-
-    // Cerrar el menú cuando se hace clic fuera
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleMenuItemClick = (action) => {
-    if (action === 'logout') {
-      onLogout();
-    } else if (action === 'profile') {
-      window.location.href = '/profile';
-    } else if (action === 'settings') {
-      window.location.href = '/settings';
-    }
-    setIsOpen(false);
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    window.location.href = "/";
   };
 
   return (
-    <div className="relative" ref={menuRef}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 focus:outline-none"
-      >
-        <div className="w-10 h-10 rounded-full bg-[#76a82c] flex items-center justify-center text-white">
-          <UserCircle size={32} />
+    <div className="flex flex-col items-center min-h-screen bg-gray-900 text-white py-8 px-4">
+      <div className="bg-gray-800 shadow-lg rounded-lg w-full max-w-4xl p-6">
+        {/* Header */}
+        <div className="border-b border-gray-700 pb-4 mb-6">
+          <h1 className="text-2xl font-bold">My Profile</h1>
+          <p className="text-gray-400">Preferred name</p>
+          <h2 className="text-lg">{userData.name}</h2>
         </div>
-        <ChevronDown
-          className={`transition-transform duration-200 ${
-            isOpen ? 'transform rotate-180' : ''
-          }`}
-          size={20}
-        />
-      </button>
 
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-          <div className="py-1">
-            <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-200">
-              <p className="font-medium">{userName}</p>
+        {/* Account Security */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-4">Account Security</h2>
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <p className="text-gray-400">Email</p>
+              <p>{userData.email}</p>
             </div>
+            <button className="text-sm text-blue-500">Change email</button>
+          </div>
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <p className="text-gray-400">Password</p>
+              <p>{userData.password}</p>
+            </div>
+            <button className="text-sm text-blue-500">Set password</button>
+          </div>
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-gray-400">2-step verification</p>
+              <p className="text-sm text-gray-500">Add an additional layer of security.</p>
+            </div>
+            <button className="text-sm text-blue-500">Add verification method</button>
+          </div>
+        </div>
 
-            <button
-              onClick={() => handleMenuItemClick('profile')}
-              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            >
-              <UserCircle className="mr-3" size={16} />
-              Profile
-            </button>
+        {/* Support */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-4">Support</h2>
+          <div className="flex justify-between items-center mb-4">
+            <p>Support access</p>
+            <label className="flex items-center">
+              <input type="checkbox" className="form-checkbox text-blue-500 mr-2" />
+              <span className="text-sm text-gray-400">Allow</span>
+            </label>
+          </div>
+          <div>
+            <button className="text-red-500">Delete my account</button>
+          </div>
+        </div>
 
-            <button
-              onClick={() => handleMenuItemClick('settings')}
-              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            >
-              <Settings className="mr-3" size={16} />
-              Settings
-            </button>
-
-            <button
-              onClick={() => handleMenuItemClick('logout')}
-              className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-            >
-              <LogOut className="mr-3" size={16} />
-              Logout
+        {/* Devices */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-4">Devices</h2>
+          <div className="flex justify-between items-center">
+            <p className="text-sm text-gray-400">Log out of all other devices</p>
+            <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+              Log out of all devices
             </button>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
-export default ProfileMenu;
+export default ProfilePage;
