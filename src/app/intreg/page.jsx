@@ -9,106 +9,149 @@ const InterpreterRegister = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setMessage('');
 
-    const res = await fetch('/api/intreg', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username,
-        email,
-        password,
-      }),
-    });
+    try {
+      const res = await fetch('/api/intreg', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+        }),
+      });
 
-    const data = await res.json();
-    if (res.ok) {
-      setMessage('Interpreter registration successful!');
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 2000);
-    } else {
-      setMessage(data.message);
+      const data = await res.json();
+      if (res.ok) {
+        setMessage('Interpreter registration successful!');
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 2000);
+      } else {
+        setMessage(data.message);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      setMessage('An error occurred. Please try again.');
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#9c7efd]">
-      <div className="bg-white rounded-lg shadow-xl overflow-hidden flex max-w-4xl w-full">
-        
-        {/* Left Side with Image */}
-        <div className="w-1/2 relative">
-          <Image
-            src="/images/imageRegister.jpeg"
-            alt="Register Image"
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-[#231373] bg-opacity-50 flex flex-col justify-center p-12 text-white">
-            <h2 className="text-3xl font-bold mb-6">Join Us as an Interpreter!</h2>
-            <p className="mb-6">Create an interpreter account to start joining teams.</p>
-          </div>
+    <div className="flex min-h-screen bg-background text-foreground font-sans">
+      {/* Left Side - Image/Brand */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-secondary overflow-hidden">
+        <Image
+          src="/images/imageRegister.jpeg"
+          alt="Interpreter Working"
+          fill
+          priority
+          className="object-cover opacity-60 mix-blend-overlay"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-secondary/80 to-primary/80" />
+        <div className="absolute inset-0 flex flex-col justify-center px-16 text-white z-10">
+          <h1 className="text-5xl font-bold mb-6 tracking-tight leading-tight">
+            Bridge the <br />Language Gap.
+          </h1>
+          <p className="text-xl text-gray-200 font-light max-w-md leading-relaxed">
+            Join our network of professional interpreters. Access powerful tools to streamline your work and connect cultures.
+          </p>
         </div>
+      </div>
 
-        {/* Right Side with Form */}
-        <div className="w-1/2 p-12">
-          <h1 className="text-3xl font-bold text-[#231373] mb-6">Interpreter Registration</h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
-              <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                className="text-black mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-[#76a82c] focus:ring-1 focus:ring-[#76a82c]"
-              />
+      {/* Right Side - Form */}
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 lg:p-16 bg-white overflow-y-auto">
+        <div className="w-full max-w-md space-y-8 animate-fade-in-up">
+          <div className="text-center lg:text-left">
+            <h2 className="text-3xl font-bold text-secondary tracking-tight">Create Interpreter Account</h2>
+            <p className="mt-2 text-gray-500">Sign up to start interpreting</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                <input
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  disabled={isLoading}
+                  placeholder="Choose a username"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-gray-50 focus:bg-white text-secondary placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={isLoading}
+                  placeholder="interpreter@example.com"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-gray-50 focus:bg-white text-secondary placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={isLoading}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-gray-50 focus:bg-white text-secondary placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+              </div>
             </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="text-black mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-[#76a82c] focus:ring-1 focus:ring-[#76a82c]"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="text-black mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-[#76a82c] focus:ring-1 focus:ring-[#76a82c]"
-              />
-            </div>
+
             <button
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#76a82c] hover:bg-[#9c7efd] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#76a82c]"
+              disabled={isLoading}
+              className="w-full py-3.5 px-4 bg-primary hover:bg-opacity-90 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all transform active:scale-[0.98] duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              Register as Interpreter
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Creating account...
+                </>
+              ) : (
+                'Sign Up as Interpreter'
+              )}
             </button>
           </form>
-          <p className="mt-4 text-sm text-center text-black">
-            Already an interpreter? {' '}
-            <Link href="/login" className="text-[#76a82c] hover:underline">
-              Login here
-            </Link>
-          </p>
-          {message && (
-            <p className={`mt-4 text-sm ${message.includes('successful') ? 'text-green-600' : 'text-red-600'}`}>
-              {message}
+
+          <div className="pt-4 text-center border-t border-gray-100">
+            <p className="text-sm text-gray-500">
+              Already have an account?{' '}
+              <Link href="/login" className="font-semibold text-primary hover:text-opacity-80 transition-colors">
+                Log in here
+              </Link>
             </p>
+          </div>
+
+          {message && (
+            <div className={`p-4 rounded-xl text-sm font-medium text-center animate-fade-in ${message.includes('successful') ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
+              {message}
+            </div>
           )}
         </div>
       </div>

@@ -7,7 +7,7 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleNameMapper: {
-    '@/': '<rootDir>/src/@', // Configura el alias @ para apuntar a src
+    '^@/(.*)$': '<rootDir>/src/$1', // Configura el alias @ para apuntar a src
   },
   moduleFileExtensions: ['js', 'jsx', 'json', 'node'], // Extensiones reconocidas por Jest
   testEnvironment: 'node', // Entorno por defecto para evitar conflictos en pruebas backend
@@ -25,7 +25,7 @@ const customJestConfig = {
       testEnvironment: 'jsdom', // Usa jsdom para pruebas frontend
     },
   ],
-  
+
   // Opcional: Configuración de transformaciones si usas Babel
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',

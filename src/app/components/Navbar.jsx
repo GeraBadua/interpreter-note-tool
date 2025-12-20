@@ -1,15 +1,14 @@
-"use client";  // Indica que este es un Client Component
+"use client";
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';  // Importa el hook de navegación correcto
+import { useRouter } from 'next/navigation';
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [role, setRole] = useState(''); // Estado para el rol del usuario
+  const [role, setRole] = useState('');
   const router = useRouter();
 
-  // Función para verificar el estado del login y rol
   const checkLoginStatus = () => {
     const token = localStorage.getItem('token');
     const userRole = localStorage.getItem('role');
@@ -20,44 +19,45 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    // Verificar si el token está en localStorage al cargar la página
     checkLoginStatus();
-
-    // Escuchar el evento personalizado 'login' para actualizar la navbar
     window.addEventListener('login', checkLoginStatus);
-
-    // Limpiar el event listener cuando el componente se desmonte
     return () => {
       window.removeEventListener('login', checkLoginStatus);
     };
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Eliminar el token del localStorage
-    localStorage.removeItem('role');  // Eliminar el rol del localStorage
-    setIsLoggedIn(false); // Actualizar el estado a no logueado
-    setRole('');          // Limpiar el rol
-    router.push('/');     // Redireccionar al inicio
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    setIsLoggedIn(false);
+    setRole('');
+    router.push('/');
   };
 
   return (
-    <nav className="bg-[#231373] p-4 text-white">
-      <div className="container mx-auto flex justify-between items-center">
-        {/* Cambiamos el href del Link dependiendo del estado de isLoggedIn */}
-        <Link href={isLoggedIn ? "/home" : "/"} className="text-2xl font-bold">
+    <nav className="bg-paper/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 transition-all duration-300">
+      <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+        <Link href={isLoggedIn ? "/home" : "/"} className="text-2xl font-bold text-primary flex items-center gap-2 tracking-tight hover:opacity-80 transition-opacity">
           Interpreter Note Tool
         </Link>
-        <div className="flex items-center">
-          {isLoggedIn && <span className="mr-4">{role}</span>}  {/* Mostrar el rol */}
+        <div className="flex items-center gap-6">
+          {isLoggedIn && (
+            <span className="text-secondary font-medium px-3 py-1 bg-gray-50 rounded-full text-sm border border-gray-100 shadow-sm capitalize">
+              {role || 'User'}
+            </span>
+          )}
           {isLoggedIn ? (
             <button
               onClick={handleLogout}
-              className="bg-[#ff5c5c] hover:bg-[#e04a4a] text-white px-4 py-2 rounded"
+              className="bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 px-5 py-2 rounded-xl transition-all font-medium border border-red-100 shadow-sm"
             >
               Logout
             </button>
           ) : (
-            <Link href="/login" className="bg-[#76a82c] hover:bg-[#9c7efd] text-white px-4 py-2 rounded">
+            <Link
+              href="/login"
+              className="bg-primary hover:bg-opacity-90 text-white px-6 py-2.5 rounded-xl transition-all font-medium shadow-md hover:shadow-lg active:scale-95"
+            >
               Login
             </Link>
           )}
