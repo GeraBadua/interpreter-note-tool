@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaAngleLeft } from 'react-icons/fa6';
 import { FcBusinessman } from 'react-icons/fc';
-import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('inbox');
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [interpreterID, setInterpreterID] = useState('');
@@ -34,11 +35,11 @@ export default function AdminDashboard() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token || localStorage.getItem('role') !== 'Admin') {
-      router.push('/home'); // Redirect if not logged in
+      router.push('/home');
+      return;
     }
-   else {
-    // fetchMembers(); // BACKEND: Implement endpoint to fetch members0
-}}, []);
+    // fetchMembers(); // BACKEND: Implement endpoint to fetch members
+  }, [router]);
 
 
   const [joinRequests, setJoinRequests] = useState([
@@ -107,7 +108,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[url('">
+    <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50">
       {/* Sidebar */}
       <div className="w-64 bg-white bg-opacity-90 p-4 rounded-lg shadow-2xl">
         <h2 className="text-2xl font-bold mb-4 text-[#231373]">Admin Dashboard</h2>

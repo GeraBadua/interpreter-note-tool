@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Interpreter Note Tool
 
-## Getting Started
+Smart notebook for interpreters with live translation, glossary lookup, and role-based workflows. Built as a portfolio-ready web app with a demo mode so it can run without a database.
 
-First, run the development server:
+## Features
+
+- Interpreter and Admin flows
+- Real-time translation and dictionary lookup
+- Smart notes UI with saved note list
+- Demo mode for deployment without MongoDB
+
+## Demo Credentials (No Database)
+
+When `MONGODB_URI` is missing or `DEMO_MODE=true`, the app runs in demo mode.
+Demo mode uses in-memory notes only (refreshing the page resets them).
+
+- Admin: `admin@demo.com` / `Admin123!`
+- Interpreter: `interpreter@demo.com` / `Interpreter123!`
+
+## Run Locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Optional: MongoDB Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Create a `.env.local` file and add:
 
-## Learn More
+```bash
+MONGODB_URI="mongodb+srv://<user>:<pass>@<cluster>/<dbName>?retryWrites=true&w=majority"
+JWT_SECRET="your-secret"
+DEEPL_API_KEY="your-deepl-key"
+```
 
-To learn more about Next.js, take a look at the following resources:
+If you want to force demo mode even with a database, add:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+DEMO_MODE="true"
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Deploy
 
-## Deploy on Vercel
+You can deploy on Vercel without MongoDB by leaving `MONGODB_URI` unset. The demo mode will handle login and notes with in-memory data.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## API Notes (Why Some Endpoints Fail)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Some endpoints require credentials:
+
+- `/api/translate` needs `DEEPL_API_KEY` (DeepL)
+- `/api/dictionary` also uses `DEEPL_API_KEY` to translate definitions
+- `/api/datamuse` works without credentials
+
+Database-backed endpoints:
+
+- `/api/login` and `/api/notes` work in demo mode if `MONGODB_URI` is missing or `DEMO_MODE=true`
+- `/api/intreg`, `/api/adminreg`, `/api/adminteam` are disabled in demo mode (they need MongoDB)
+
+To make everything work for a full test:
+
+1) Add a MongoDB connection string and `JWT_SECRET` in `.env.local`
+2) Add a `DEEPL_API_KEY`
+3) Restart the dev server

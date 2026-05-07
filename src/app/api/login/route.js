@@ -1,7 +1,9 @@
-import connect from '../../../lib/dbConnection';
+import connect, { isDemoMode } from '../../../lib/dbConnection';
 import User from '../../../models/User';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { findDemoUserByEmail } from '@/lib/demoData';
+import { getJwtSecret } from '@/lib/auth';
 
 export async function POST(req) {
   try {
@@ -20,7 +22,7 @@ export async function POST(req) {
       );
     }
 
-    const user = await User.findOne({ email });
+    const user = isDemoMode() ? findDemoUserByEmail(email) : await User.findOne({ email });
     if (!user) {
       return new Response(
         JSON.stringify({ message: 'Invalid email or password' }),
@@ -42,9 +44,20 @@ export async function POST(req) {
       );
     }
 
+    const jwtSecret = getJwtSecret();
+    if (!jwtSecret) {
+      return new Response(
+        JSON.stringify({ message: 'Missing JWT secret' }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
     const token = jwt.sign(
       { id: user._id, role: user.role },
-      process.env.JWT_SECRET
+      jwtSecret
       // { expiresIn: '1h' }
     );
 

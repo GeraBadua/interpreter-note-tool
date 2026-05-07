@@ -1,12 +1,16 @@
 // routes/adminteam/route.js
 
-import connect from '@/lib/dbConnection';
+import connect, { isDemoMode } from '@/lib/dbConnection';
 import Team from '@/models/Team';
 import User from '@/models/User';
 
 export async function POST(req) {
   try {
     await connect();
+
+    if (isDemoMode()) {
+      return new Response(JSON.stringify({ message: 'Demo mode: team updates are disabled.' }), { status: 400 });
+    }
 
     const body = await req.json();
     const { adminPrivateId, interpreterPublicUuid } = body;

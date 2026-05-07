@@ -1,4 +1,4 @@
-import connect from '@/lib/dbConnection';
+import connect, { isDemoMode } from '@/lib/dbConnection';
 import User from '@/models/User';
 import bcrypt from 'bcryptjs';
 
@@ -20,6 +20,13 @@ export async function POST(req) {
           message:
             'Password must be at least 8 characters long, and include uppercase letters, lowercase letters, numbers, and special characters.',
         }),
+        { status: 400 }
+      );
+    }
+
+    if (isDemoMode()) {
+      return new Response(
+        JSON.stringify({ message: 'Demo mode: registration is disabled. Use the demo accounts in the README.' }),
         { status: 400 }
       );
     }

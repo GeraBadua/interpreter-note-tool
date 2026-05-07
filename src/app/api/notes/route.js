@@ -1,6 +1,8 @@
-import connect from '@/lib/dbConnection';
+import connect, { isDemoMode } from '@/lib/dbConnection';
 import Note from '@/models/Note';
 import jwt from 'jsonwebtoken';
+import { DEMO_NOTES } from '@/lib/demoData';
+import { getJwtSecret } from '@/lib/auth';
 
 export async function POST(req) {
   try {
@@ -22,9 +24,32 @@ export async function POST(req) {
     const token = authHeader.split(' ')[1];
 
     // Verificar y decodificar el token para obtener el userId
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const jwtSecret = getJwtSecret();
+    if (!jwtSecret) {
+      return new Response(JSON.stringify({ message: 'Missing JWT secret' }), {
+        status: 500,
+      });
+    }
+
+    const decoded = jwt.verify(token, jwtSecret);
     const userId = decoded.id;  // Obtenemos el ID del usuario del token
     console.log('User ID from token:', userId);
+
+    if (isDemoMode()) {
+      const demoNote = {
+        _id: `demo-note-${Date.now()}`,
+        note_title,
+        topic,
+        note,
+        user_id: userId,
+        created_at: new Date(),
+        updated_at: new Date(),
+      };
+
+      return new Response(JSON.stringify({ message: 'Note registered successfully', note: demoNote }), {
+        status: 201,
+      });
+    }
 
     // Verificar si el título de la nota ya existe para este usuario
     const existingTitle = await Note.findOne({ note_title, user_id: userId });
@@ -76,9 +101,21 @@ export async function GET(req) {
     }
 
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const jwtSecret = getJwtSecret();
+    if (!jwtSecret) {
+      return new Response(JSON.stringify({ message: 'Missing JWT secret' }), {
+        status: 500,
+      });
+    }
+
+    const decoded = jwt.verify(token, jwtSecret);
     const userId = decoded.id;  // Obtenemos el ID del usuario del token
     console.log('User ID from token:', userId);
+
+    if (isDemoMode()) {
+      const demoNotes = DEMO_NOTES.filter((noteItem) => noteItem.user_id === userId);
+      return new Response(JSON.stringify(demoNotes), { status: 200 });
+    }
 
     // Obtener las notas que pertenecen al usuario autenticado
     const userNotes = await Note.find({ user_id: userId });

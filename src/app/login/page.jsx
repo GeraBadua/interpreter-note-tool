@@ -80,6 +80,12 @@ const Login = () => {
           <h1 className="text-3xl font-bold text-secondary mb-2">Hello!</h1>
           <p className="text-gray-500 mb-8">Good Morning, please login to continue.</p>
 
+          <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800">
+            <p className="text-sm font-semibold">Demo access (no database required)</p>
+            <p className="text-xs text-amber-700">Admin: admin@demo.com · Admin123!</p>
+            <p className="text-xs text-amber-700">Interpreter: interpreter@demo.com · Interpreter123!</p>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>

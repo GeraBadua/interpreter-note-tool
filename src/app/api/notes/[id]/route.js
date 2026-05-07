@@ -1,6 +1,7 @@
-import connect from '@/lib/dbConnection';
+import connect, { isDemoMode } from '@/lib/dbConnection';
 import Note from '@/models/Note';
 import jwt from 'jsonwebtoken';
+import { getJwtSecret } from '@/lib/auth';
 
 export async function DELETE(req, { params }) {
     try {
@@ -15,12 +16,25 @@ export async function DELETE(req, { params }) {
         }
 
         const token = authHeader.split(' ')[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const jwtSecret = getJwtSecret();
+        if (!jwtSecret) {
+            return new Response(JSON.stringify({ message: 'Missing JWT secret' }), {
+                status: 500,
+            });
+        }
+
+        const decoded = jwt.verify(token, jwtSecret);
         const userId = decoded.id;
 
         if (!userId) {
             return new Response(JSON.stringify({ message: 'Invalid token' }), {
                 status: 401,
+            });
+        }
+
+        if (isDemoMode()) {
+            return new Response(JSON.stringify({ message: 'Note deleted successfully' }), {
+                status: 200,
             });
         }
 
